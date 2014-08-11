@@ -230,6 +230,7 @@ class BackupWorker(object):
         self.cassandra_data_path = cassandra_data_path
         self.nodetool_path = nodetool_path or "%s/nodetool" % cassandra_bin_dir
         self.cassandra_cli_path = "%s/cassandra-cli" % cassandra_bin_dir
+        self.cassandra_cqlsh_path = "%s/cqlsh" % cassandra_bin_dir
         self.backup_schema = backup_schema
         self.connection_pool_size = connection_pool_size
 
@@ -301,9 +302,9 @@ class BackupWorker(object):
         output = ""
         with settings(host_string=env.hosts[0]):
             with hide('output'):
-                cmd = "echo -e 'show schema;\n' | %s" % (self.cassandra_cli_path)
+                cmd = "echo -e 'describe schema;\n' | %s" % (self.cassandra_cqlsh_path)
                 if keyspace:
-                    cmd = "echo -e 'show schema;\n' | %s -k %s" % (self.cassandra_cli_path, keyspace)
+                    cmd = "echo -e 'describe keyspace %s;\n' | %s" % (keyspace, self.cassandra_cqlsh_path)
                 output = sudo(cmd)
         schema = '\n'.join([l for l in output.split("\n") if re.match(r'(create|use| )',l)])
         return schema
