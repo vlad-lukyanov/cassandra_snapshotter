@@ -306,7 +306,7 @@ class BackupWorker(object):
                 if keyspace:
                     cmd = "echo -e 'describe keyspace %s;\n' | %s" % (keyspace, self.cassandra_cqlsh_path)
                 output = sudo(cmd)
-        schema = '\n'.join([l for l in output.split("\n") if re.match(r'(create|use| )',l)])
+        schema = output
         return schema
 
     def write_on_S3(self, bucket_name, path, content):
