@@ -119,7 +119,8 @@ class RestoreWorker(object):
 
         keys = []
         tables = set()
-
+#	base_path=self.snapshot.base_path[1:]
+#	base_path=base_path.replace("//", "/")
         for k in bucket.list(self.snapshot.base_path):
             r = self.keyspace_table_matcher.search(k.name)
             if not r:
@@ -131,7 +132,6 @@ class RestoreWorker(object):
         self._delete_old_dir_and_create_new(keyspace, tables)
 
         total_size = reduce(lambda s, k: s + k.size, keys, 0)
-
         logging.info("Found %(files_count)d files, with total size of %(size)s." % dict(
             files_count=len(keys),
             size=self._human_size(total_size)))
@@ -192,6 +192,9 @@ class RestoreWorker(object):
     def _run_sstableloader(self, keyspace, tables, target_hosts):
         # TODO: get path to sstableloader
         for table in tables:
+	    #unpack
+	    command = 'lzop -dU %(keyspace)s/%(table)s/*.lzo' % dict(keyspace=keyspace, table=table)
+            os.system(command)
             command = 'sstableloader --nodes %(hosts)s -v %(keyspace)s/%(table)s' % dict(
                 hosts=','.join(target_hosts), keyspace=keyspace, table=table)
             logging.info("invoking: %s", command)
