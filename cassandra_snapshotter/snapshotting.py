@@ -233,7 +233,7 @@ class BackupWorker(object):
         self.cassandra_data_path = cassandra_data_path
         self.nodetool_path = nodetool_path or "%s/nodetool" % cassandra_bin_dir
         self.cassandra_cli_path = "%s/cassandra-cli" % cassandra_bin_dir
-        self.cassandra_cqlsh_path = "%s/cqlsh %s" % cassandra_bin_dir, self.get_current_node_hostname()
+        self.cassandra_cqlsh_path = "%s/cqlsh %s" % cassandra_bin_dir, "172.16.2.160"
         self.backup_schema = backup_schema
         self.connection_pool_size = connection_pool_size
 
